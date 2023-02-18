@@ -17,7 +17,7 @@ class PostController extends Controller
      */
     public function index(): JsonResponse
     {
-        $posts = Post::all();
+        $posts = Post::with('category')->get();
 
         return PostResource::collection($posts)->response()->setStatusCode(Status::HTTP_OK);
     }
@@ -32,13 +32,14 @@ class PostController extends Controller
     public function store(Request $request): JsonResponse
     {
         $attributes = $request->validate([
-            'slug'  => 'required|string|max:255|unique:posts',
-            'title' => 'required|string|max:255',
+            'slug'        => 'required|string|max:255|unique:posts',
+            'title'       => 'required|string|max:255',
+            'category_id' => 'required|string|exists:categories,_id',
         ]);
 
         $post = Post::create($attributes);
 
-        return (new PostResource($post))->response()->setStatusCode(Status::HTTP_CREATED);
+        return (new PostResource($post->load('category')))->response()->setStatusCode(Status::HTTP_CREATED);
     }
 
     /**
@@ -50,7 +51,7 @@ class PostController extends Controller
      */
     public function show(Post $post): JsonResponse
     {
-        return (new PostResource($post))->response()->setStatusCode(Status::HTTP_OK);
+        return (new PostResource($post->load('category')))->response()->setStatusCode(Status::HTTP_OK);
     }
 
     /**
@@ -64,13 +65,14 @@ class PostController extends Controller
     public function update(Request $request, Post $post): JsonResponse
     {
         $attributes = $request->validate([
-            'slug'  => 'sometimes|string|max:255|unique:posts',
-            'title' => 'sometimes|string|max:255',
+            'slug'        => 'sometimes|string|max:255|unique:posts',
+            'title'       => 'sometimes|string|max:255',
+            'category_id' => 'required|string|exists:categories,_id',
         ]);
 
         $post->update($attributes);
 
-        return (new PostResource($post))->response()->setStatusCode(Status::HTTP_ACCEPTED);
+        return (new PostResource($post->load('category')))->response()->setStatusCode(Status::HTTP_ACCEPTED);
     }
 
     /**
