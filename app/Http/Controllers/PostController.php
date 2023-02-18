@@ -32,7 +32,7 @@ class PostController extends Controller
     public function store(Request $request): JsonResponse
     {
         $attributes = $request->validate([
-            'slug'  => 'required|string|max:255',
+            'slug'  => 'required|string|max:255|unique:posts',
             'title' => 'required|string|max:255',
         ]);
 
@@ -64,9 +64,11 @@ class PostController extends Controller
     public function update(Request $request, Post $post): JsonResponse
     {
         $attributes = $request->validate([
-            'slug'  => 'sometimes|string|max:255',
+            'slug'  => 'sometimes|string|max:255|unique:posts',
             'title' => 'sometimes|string|max:255',
         ]);
+
+        $post->update($attributes);
 
         return (new PostResource($post))->response()->setStatusCode(Status::HTTP_ACCEPTED);
     }
