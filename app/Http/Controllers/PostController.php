@@ -34,7 +34,7 @@ class PostController extends Controller
         $attributes = $request->validate([
             'slug'        => 'required|string|max:255|unique:posts',
             'title'       => 'required|string|max:255',
-            'category_id' => 'required|string|exists:categories,_id',
+            'category_id' => 'required|string',
         ]);
 
         $post = Post::create($attributes);
@@ -67,7 +67,7 @@ class PostController extends Controller
         $attributes = $request->validate([
             'slug'        => 'sometimes|string|max:255|unique:posts',
             'title'       => 'sometimes|string|max:255',
-            'category_id' => 'required|string|exists:categories,_id',
+            'category_id' => 'required|string',
         ]);
 
         $post->update($attributes);
