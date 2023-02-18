@@ -40,4 +40,48 @@ class PostController extends Controller
 
         return (new PostResource($post))->response()->setStatusCode(Status::HTTP_CREATED);
     }
+
+    /**
+     * show the specified post.
+     *
+     * @param  \App\Models\Post  $post
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Post $post): JsonResponse
+    {
+        return (new PostResource($post))->response()->setStatusCode(Status::HTTP_OK);
+    }
+
+    /**
+     * Edit post details
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Post  $post
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, Post $post): JsonResponse
+    {
+        $attributes = $request->validate([
+            'slug'  => 'sometimes|string|max:255',
+            'title' => 'sometimes|string|max:255',
+        ]);
+
+        return (new PostResource($post))->response()->setStatusCode(Status::HTTP_ACCEPTED);
+    }
+
+    /**
+     * delete specified post.
+     *
+     * @param  \App\Models\Post  $post
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(Post $post): JsonResponse
+    {
+        $post->delete();
+
+        return (new PostResource($post))->response()->setStatusCode(Status::HTTP_NO_CONTENT);
+    }
 }
